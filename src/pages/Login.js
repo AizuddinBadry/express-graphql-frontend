@@ -1,10 +1,13 @@
 import React from "react";
 import { Formik } from "formik";
 import { useLazyQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
 import { QUERY_USER_LOGIN } from "../graphql/users/queries";
 
 export default function Login() {
+  let navigate = useNavigate();
+
   const [queryUserLogin, { loading, error, data }] =
     useLazyQuery(QUERY_USER_LOGIN);
 
@@ -28,6 +31,9 @@ export default function Login() {
           queryUserLogin({
             variables: { email, password },
           });
+          if (data.login?.token) {
+            navigate("/dashboard");
+          }
         }}
       >
         {({
@@ -37,7 +43,6 @@ export default function Login() {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting,
           /* and other goodies */
         }) => (
           <form onSubmit={handleSubmit}>
@@ -77,7 +82,6 @@ export default function Login() {
             </div>
             <button
               type="submit"
-              disabled={isSubmitting}
               className="bg-sky-600 hover:bg-blue-dark text-white font-bold py-2 px-4 rounded"
             >
               Login
